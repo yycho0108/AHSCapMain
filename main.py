@@ -58,7 +58,6 @@ class AHSGui(object):
                     )
         print self.p_axi_
 
-
         self.axi_ = axi.Device(**self.p_axi_)
         self.axi_.enable_motors()
         self.axi_.pen_up()
@@ -67,7 +66,7 @@ class AHSGui(object):
         # Camera
         self.params_ = np.load('camera_parameters.npz')
         self.align_  = np.load('m.npy')
-        self.cam_ = cv2.VideoCapture(1)
+        self.cam_ = cv2.VideoCapture(0)
         self.img_ = None
 
         # Drawing Data
@@ -176,12 +175,12 @@ class AHSGui(object):
     def run(self):
         cv2.namedWindow('window', cv2.WINDOW_NORMAL)
         cv2.setWindowProperty("window", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
-
         cv2.setMouseCallback('window', self.mouse_cb)
 
         while True:
             # real-life feedback
             frame = self.get_frame()
+            #warp  = frame
             warp  = cv2.warpPerspective(frame, self.align_,
                     tuple(self.drw_.shape[:2][::-1]))
             #viz = np.concatenate([self.drw_, frame], axis=1)
@@ -226,7 +225,7 @@ class AHSGui(object):
                     self.t_ex_ = None
                 self.data_['up'] = False
                 self.axi_.pen_up()
-                self.axi_.home()
+                #self.axi_.home()
 
         cv2.destroyAllWindows()
 
